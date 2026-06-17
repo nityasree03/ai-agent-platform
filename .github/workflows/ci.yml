@@ -1,0 +1,42 @@
+name: Agent CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_FORCE_MOCK: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest tests/ -v
+
+      - name: Run multi-agent evaluation suite
+        run: python eval/run_multi_agent_eval.py
+
+      - name: Enforce success-rate regression gate
+        run: |
+          python -c "
+          import json
+          with open('eval/multi_agent_eval_results.json') as f:
+              results = json.load(f)
+          success_rate = results['success_rate']
+          routing_accuracy = results['routing_accuracy']
+          print(f'Success rate: {success_rate:.2%}')
+          print(f'Routing accuracy: {routing_accuracy:.2%}')
+          assert success_rate >= 0.85, f'Success rate {success_rate:.2%} fell below 85% gate'
+          assert routing_accuracy >= 0.85, f'Routing accuracy {routing_accuracy:.2%} fell below 85% gate'
+          "
+
+

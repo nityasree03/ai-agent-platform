@@ -6,7 +6,7 @@
   "avg_steps_to_completion": 2.0,
   "self_correction_rate": 0.0,
   "avg_tokens_per_task": 308.93333333333334,
-  "total_eval_time_s": 0.0,
+  "total_eval_time_s": 0.01,
   "per_task": [
     {
       "id": 1,
