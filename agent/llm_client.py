@@ -182,7 +182,13 @@ class MockLLMClient(BaseLLMClient):
 
     def _route(self, last: str) -> str:
         q = last.lower()
-        if any(k in q for k in ["calculate", "sum", "total", "sql", "database", "sales", "revenue", "threshold"]):
+        # Check research-only signals first, since "database" can appear in
+        # research queries too (e.g. "vector databases") and shouldn't
+        # false-match the data_agent keyword check below.
+        if any(k in q for k in ["search", "look up", "find out", "latest", "news", "trends", "developments", "updates", "policy", "runbook", "kb"]):
+            return json.dumps({"route": "research_agent", "reason": "Task involves search or knowledge lookup."})
+        has_bare_math = bool(re.search(r"\d+\s*[\+\-\*/%]\s*\d+", q))
+        if has_bare_math or any(k in q for k in ["calculate", "sum", "total", "sql", "sales", "orders", "revenue", "threshold"]):
             return json.dumps({"route": "data_agent", "reason": "Task involves computation or structured data lookup."})
         return json.dumps({"route": "research_agent", "reason": "Task involves search or knowledge lookup."})
 

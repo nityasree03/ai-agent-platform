@@ -76,6 +76,20 @@ def executor_node(state: dict) -> dict:
     """Execute the tool the planner requested and append the result to history."""
     tool_name = state.get("pending_tool")
     tool_args = state.get("pending_tool_args", {})
+    allowed_tools = state.get("allowed_tools")
+    if allowed_tools and tool_name not in allowed_tools:
+        result = {"error": f"Tool '{tool_name}' is not available to this sub-agent. Allowed: {allowed_tools}"}
+        state.setdefault("tool_call_count", 0)
+        state["tool_call_count"] += 1
+        state["last_tool_result"] = result
+        state["last_tool_succeeded"] = False
+        state["trace"].append({
+            "node": "executor", "tool": tool_name, "args": tool_args,
+            "result": result, "succeeded": False, "latency_s": 0.0, "ts": time.time(),
+        })
+        state["messages"].append({"role": "user", "content": f"tool_result for {tool_name}: {json.dumps(result)}"})
+        return state
+
     start = time.time()
     result = call_tool(tool_name, tool_args)
     latency = round(time.time() - start, 3)
