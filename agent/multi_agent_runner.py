@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from .nodes import planner_node, executor_node, reflector_node, MAX_STEPS
 from .supervisor import supervisor_node, SUB_AGENT_TOOLS
-
+from .tracing import maybe_log_run
 
 def run_multi_agent(user_query: str) -> dict:
     """Run a task through the Supervisor, then the routed sub-agent's loop."""
@@ -37,7 +37,9 @@ def run_multi_agent(user_query: str) -> dict:
         if state.get("task_complete"):
             break
 
+       
     state.setdefault("final_answer", "No answer produced.")
+    state["tracing_result"] = maybe_log_run(user_query, state)
     return state
 
 
