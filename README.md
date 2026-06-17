@@ -2,6 +2,9 @@
 
 A multi-agent system that plans, routes, calls tools, and self-corrects — built around a Supervisor + Research/Data sub-agent architecture, with a planner -> executor -> reflector loop inside each sub-agent.
 
+
+**Live demo:** https://ai-agent-platform-dd3jg7fsvzygphwfmh7wws.streamlit.app
+
 ## Status: complete
 
 - Core agent loop, 4 tools, mock LLM client, tests, eval harness (100% success)
