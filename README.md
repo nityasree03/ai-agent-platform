@@ -4,10 +4,10 @@ A multi-agent system that plans, routes, calls tools, and self-corrects — buil
 
 ## Status: complete
 
-- Week 1 - Core agent loop, 4 tools, mock LLM client, tests, eval harness (100% success)
-- Week 2 - Supervisor + Research/Data sub-agents with real tool-scoping enforcement, multi-agent eval (100% success, 100% routing accuracy)
-- Week 3 - LangSmith tracing (graceful no-op without a key), hardened eval
-- Week 4 - FastAPI endpoints, Streamlit UI with reasoning-trace viewer, Docker, GitHub Actions CI gate
+- Core agent loop, 4 tools, mock LLM client, tests, eval harness (100% success)
+- Supervisor + Research/Data sub-agents with real tool-scoping enforcement, multi-agent eval (100% success, 100% routing accuracy)
+- LangSmith tracing (graceful no-op without a key), hardened eval
+- FastAPI endpoints, Streamlit UI with reasoning-trace viewer, Docker, GitHub Actions CI gate
 ## Architecture
 
 User query goes to a Supervisor, which classifies the task and routes it to a sub-agent: Research Agent (web_search, kb_retriever) or Data Agent (calculator, db_query). Inside each sub-agent, a Planner decides the next action, an Executor runs it if a tool was requested, and a Reflector judges the result, looping back to the Planner if the task is not yet complete.
